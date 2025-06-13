@@ -1,10 +1,5 @@
 server:
-  port: 8443
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: Gnsanan@2005
-    key-store-type: PKCS12
-    key-alias: localhost
+  port: ${PORT:8080}  # Port dynamique Railway
 
 spring:
   application:
@@ -14,9 +9,8 @@ spring:
       ddl-auto: update
     show-sql: true
 
-
 app:
-  frontend-url: http://localhost:3000
+  frontend-url: https://my-ibc-frontend.vercel.app # 🔁 Mets ton vrai domaine ici
   jwt:
-    secret: ${APP_JWT_SECRET}
+    secret: ${JWT_SECRET}     # ✅ Utilisation de la variable d’environnement
     expiration: 7200000
