@@ -7,7 +7,7 @@ spring:
 
   #Configuration de la base de donnée
   datasource:
-    url: jdbc:postgresql://localhost:5432/my_ibc
+    url: ${JDBC_DATABASE_URL}  # ✅ Utilisation de la variable d’environnement
     username: ${JDBC_DATABASE_USERNAME}  # ✅ Utilisation de la variable d’environnement$
     password: ${JDBC_DATABASE_PASSWORD}  # ✅ Utilisation de la variable d’environnement $
   jpa:
