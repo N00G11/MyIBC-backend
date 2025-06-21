@@ -27,6 +27,16 @@ public class CampController {
         return campRepository.save(camp);
     }
 
+    @GetMapping("/{id}")
+    public Camp getCampById(@PathVariable Long id){
+        Optional<Camp> c = campRepository.findById(id);
+        if (c.isPresent()){
+            return c.get();
+        }
+
+        return null;
+    }
+
     @PutMapping("/update/{type}")
     public Optional<Camp> updateCamp(@PathVariable String type, @RequestBody Camp camp){
         return campRepository.findCampByType(type).map(c -> {
