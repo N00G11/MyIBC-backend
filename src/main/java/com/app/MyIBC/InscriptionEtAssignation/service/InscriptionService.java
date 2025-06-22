@@ -32,20 +32,20 @@ public class InscriptionService {
     public Inscription assignerDirigeantEquitablement(Participant participant, String email, Long campId) throws IOException, WriterException {
         Inscription inscription = new Inscription();
         inscription.setDate(LocalDate.now());
-        String ville = participant.getVille(); // Supposons que Participant a une propriété 'ville'
+        String delegation = participant.getDelegation(); // Supposons que Participant a une propriété 'ville'
 
         // Récupérer tous les dirigeants de la même ville
-        List<Dirigeant> dirigeantsVille = dirigeantRepository.findByVille(ville);
+        List<Dirigeant> dirigeantsVille = dirigeantRepository.findByDelegation(delegation);
 
         if (dirigeantsVille.isEmpty()) {
-            throw new IllegalStateException("Aucun dirigeant disponible pour la ville : " + ville);
+            throw new IllegalStateException("Aucun dirigeant disponible pour la delegation : " + delegation);
         }
 
         // Compter le nombre d'inscriptions par dirigeant pour la ville
         Map<Dirigeant, Long> compteurDirigeants = dirigeantsVille.stream()
                 .collect(Collectors.toMap(
                         dirigeant -> dirigeant,
-                        dirigeant -> inscriptionRepository.countByDirigeantAssigneAndVille(dirigeant, ville)
+                        dirigeant -> inscriptionRepository.countByDirigeantAssigneAndVille(dirigeant, delegation)
                 ));
 
         // Trouver la valeur minimale d'assignations
