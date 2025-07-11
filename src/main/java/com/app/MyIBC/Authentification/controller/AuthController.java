@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,6 +36,21 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
 
+    @GetMapping("/success")
+    public ResponseEntity<?> success(Authentication authentication) {
+        OAuth2User user = (OAuth2User) authentication.getPrincipal();
+        String email = user.getAttribute("email");
+        String name = user.getAttribute("name");
+
+
+        // Générer le token
+        String token = jwtUtils.generateToken(name);
+
+        return ResponseEntity.ok(Map.of(
+                "email", email,
+                "name", name
+        ));
+    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
         // Vérification d'unicité

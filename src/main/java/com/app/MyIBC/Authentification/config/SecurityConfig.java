@@ -2,7 +2,10 @@ package com.app.MyIBC.Authentification.config;
 
 
 import com.app.MyIBC.Authentification.filter.JwtFilter;
+import com.app.MyIBC.Authentification.repository.UserRepository;
+import com.app.MyIBC.Authentification.service.CustomOAuth2UserService;
 import com.app.MyIBC.Authentification.service.CustomUserDetailsService;
+import com.app.MyIBC.GestionDesUtilisateur.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,6 +31,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+    private final ParticipantRepository participantRepository;
     private final JwtUtils jwtUtils;
 
 
@@ -38,6 +46,12 @@ public class SecurityConfig {
                             .requestMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated();
                 })
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/api/auth/success", true)
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oauth2UserService())
+                        )
+                )
                 .addFilterBefore(new JwtFilter(userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -53,5 +67,10 @@ public class SecurityConfig {
         AuthenticationManagerBuilder authenticationManagerBuilder =http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         return  authenticationManagerBuilder.build();
+    }
+
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
+        return new CustomOAuth2UserService(userRepository,participantRepository);
     }
 }
