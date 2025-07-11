@@ -13,10 +13,4 @@ public class MyIbcApplication {
 		SpringApplication.run(MyIbcApplication.class, args);
 	}
 
-	@Bean
-	public FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
-		FilterRegistrationBean<ForwardedHeaderFilter> filter = new FilterRegistrationBean<>();
-		filter.setFilter(new ForwardedHeaderFilter());
-		return filter;
-	}
 }

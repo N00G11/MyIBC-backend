@@ -45,6 +45,7 @@ public class SecurityConfig {
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("https://my-ibc-frontend-8imw2guov-n00g11s-projects.vercel.app/auth/callback", true)
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oauth2UserService())
                         )
