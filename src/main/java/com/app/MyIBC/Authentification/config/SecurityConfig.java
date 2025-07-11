@@ -1,6 +1,7 @@
 package com.app.MyIBC.Authentification.config;
 
 
+import com.app.MyIBC.Authentification.filter.CustomOAuth2SuccessHandler;
 import com.app.MyIBC.Authentification.filter.JwtFilter;
 import com.app.MyIBC.Authentification.repository.UserRepository;
 import com.app.MyIBC.Authentification.service.CustomOAuth2UserService;
@@ -34,7 +35,7 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
     private final JwtUtils jwtUtils;
-
+    private final CustomOAuth2SuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
@@ -47,10 +48,7 @@ public class SecurityConfig {
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/api/auth/success", true)
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(oauth2UserService())
-                        )
+                        .successHandler(successHandler)
                 )
                 .addFilterBefore(new JwtFilter(userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -69,8 +67,4 @@ public class SecurityConfig {
         return  authenticationManagerBuilder.build();
     }
 
-    @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
-        return new CustomOAuth2UserService(userRepository,participantRepository);
-    }
 }
