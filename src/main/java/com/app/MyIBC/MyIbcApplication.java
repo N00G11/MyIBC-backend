@@ -2,6 +2,9 @@ package com.app.MyIBC;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 @SpringBootApplication
 public class MyIbcApplication {
@@ -10,4 +13,10 @@ public class MyIbcApplication {
 		SpringApplication.run(MyIbcApplication.class, args);
 	}
 
+	@Bean
+	public FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
+		FilterRegistrationBean<ForwardedHeaderFilter> filter = new FilterRegistrationBean<>();
+		filter.setFilter(new ForwardedHeaderFilter());
+		return filter;
+	}
 }
