@@ -21,6 +21,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,9 +63,16 @@ public class AuthController {
                 "email", email,
                 "name", name,
                 "token", token,
-                "role", String.valueOf(existingUser.getRole())
+                "role", String.valueOf(existingUser.getRole()),
+                "isNew", isNew
         ));
     }
+
+    @GetMapping("/redirect-success")
+    public void redirectSuccess(HttpServletResponse response) throws IOException {
+        response.sendRedirect("http://localhost:3000/auth/callback");
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
