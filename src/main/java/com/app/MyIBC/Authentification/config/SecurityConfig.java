@@ -45,7 +45,7 @@ public class SecurityConfig {
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/api/auth/redirect-success", true)
+                        .defaultSuccessUrl("http://localhost:3000/auth/callback", true)
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oauth2UserService())
                         )

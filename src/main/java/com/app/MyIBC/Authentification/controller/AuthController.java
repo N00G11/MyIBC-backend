@@ -68,12 +68,6 @@ public class AuthController {
         ));
     }
 
-    @GetMapping("/redirect-success")
-    public void redirectSuccess(HttpServletResponse response) throws IOException {
-        response.sendRedirect("http://localhost:3000/auth/callback");
-    }
-
-
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
         // Vérification d'unicité
