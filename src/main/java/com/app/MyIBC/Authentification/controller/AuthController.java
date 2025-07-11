@@ -38,19 +38,33 @@ public class AuthController {
 
     @GetMapping("/success")
     public ResponseEntity<?> success(Authentication authentication) {
-        OAuth2User user = (OAuth2User) authentication.getPrincipal();
-        String email = user.getAttribute("email");
-        String name = user.getAttribute("name");
+        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+        String email = oauth2User.getAttribute("email");
+        String name = oauth2User.getAttribute("name");
 
+        // Vérifier si le user existe déjà
+        User existingUser = userRepository.findByEmail(email);
+        Boolean isNew = false;
+        if (existingUser == null) {
+            isNew = true;
+            Participant p = new Participant(); // NE PAS oublier new
+            p.setEmail(email);
+            p.setUsername(name);
+            p.setRole(Role.ROLE_PARTICIPANT);
+            participantRepository.save(p);
+        }
 
-        // Générer le token
-        String token = jwtUtils.generateToken(name);
+        // Générer un token (si besoin)
+        String token = jwtUtils.generateToken(name); // ou email selon ton JWT config
 
         return ResponseEntity.ok(Map.of(
                 "email", email,
-                "name", name
+                "name", name,
+                "token", token,
+                "role", String.valueOf(existingUser.getRole())
         ));
     }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
         // Vérification d'unicité
