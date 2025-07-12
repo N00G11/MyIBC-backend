@@ -3,30 +3,27 @@ server:
   forward-headers-strategy: native
 
 spring:
-  servelet:
+  servlet:
     session:
       cookie:
         same-site: None
         secure: true
   application:
     name: MyIBC
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope:
-              - email
-              - profile
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://www.googleapis.com/oauth2/v1/userinfo
-            username-attribute: sub
+
+
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR
+    com.app.MyIBC: TRACE
+
+okta:
+  oauth2:
+    issuer: https://dev-yico8srs45m4a3ec.us.auth0.com/
+    client-id: 0U5UeQ6H879uDEiBFQ1uurFmvSsdLaYx
+    client-secret: {yourClientSecret}
+
 
   #Configuration de la base de donnée
   datasource:
