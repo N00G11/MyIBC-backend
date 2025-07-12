@@ -20,9 +20,9 @@ logging:
 
 okta:
   oauth2:
-    client-id: ${YOUR-CLIENT-ID}
-    client-secret: ${YOUR-CLIENT-SECRET}
-    issuer-uri: https://${YOUR-DOMAIN}/
+    client-id: ${YOUR_CLIENT_ID}
+    client-secret: ${YOUR_CLIENT_SECRET}
+    issuer-uri: https://${YOUR_DOMAIN}/
 
 
   #Configuration de la base de donnée
