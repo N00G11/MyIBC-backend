@@ -1,13 +1,7 @@
 server:
   port: ${PORT:8080}  # Port dynamique Railway
-  forward-headers-strategy: native
 
 spring:
-  servlet:
-    session:
-      cookie:
-        same-site: None
-        secure: true
   application:
     name: MyIBC
 
@@ -39,6 +33,3 @@ okta:
 
 app:
   frontend-url: https://my-ibc-frontend.vercel.app # 🔁 Mets ton vrai domaine ici
-  jwt:
-    secret: ${JWT_SECRET}     # ✅ Utilisation de la variable d’environnement
-    expiration: 7200000
