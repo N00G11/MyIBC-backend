@@ -39,5 +39,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String redirectWithToken = redirectUri + "?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 
         // 5. Rediriger vers le frontend
+        response.sendRedirect(redirectWithToken);
     }
 }
