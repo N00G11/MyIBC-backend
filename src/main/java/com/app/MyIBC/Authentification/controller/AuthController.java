@@ -43,7 +43,8 @@ public class AuthController {
     public ResponseEntity<?> success(@AuthenticationPrincipal OAuth2User principal) {
 
         if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non authentifié");
+            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non authentifié");
+            return ResponseEntity.badRequest().build();
         }
 
         String email = principal.getAttribute("email");
