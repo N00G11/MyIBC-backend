@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -54,8 +55,8 @@ public class SecurityConfig {
                 })
                 .oauth2Login(oauth -> oauth
                         .successHandler((request, response, authentication) -> {
-                            // 🚨 Redirection personnalisée vers le FRONTEND
-                            response.sendRedirect("https://myibc-frontend.vercel.app/dashboard");
+                            new HttpSessionRequestCache().removeRequest(request, response); // très important
+                            response.sendRedirect("https://ton-frontend.vercel.app/dashboard");
                         })
                 )
                 .addFilterBefore(new JwtFilter(userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
