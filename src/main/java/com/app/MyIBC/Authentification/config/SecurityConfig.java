@@ -33,9 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> {
-                    // plus de .jwt(), Spring le configure automatiquement si JwtDecoder est défini
-                })
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
                 .oauth2Login(withDefaults())
                 .logout(logout -> logout.addLogoutHandler(logoutHandler()));
 
