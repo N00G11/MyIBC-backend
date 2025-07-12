@@ -53,12 +53,7 @@ public class SecurityConfig {
                             .requestMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated();
                 })
-                .oauth2Login(oauth -> oauth
-                        .successHandler((request, response, authentication) -> {
-                            new HttpSessionRequestCache().removeRequest(request, response); // très important
-                            response.sendRedirect("https://ton-frontend.vercel.app/dashboard");
-                        })
-                )
+                .oauth2Login(withDefaults())
                 .addFilterBefore(new JwtFilter(userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
