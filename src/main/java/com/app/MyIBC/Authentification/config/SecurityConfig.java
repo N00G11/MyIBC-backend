@@ -36,7 +36,7 @@ public class SecurityConfig {
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("https://my-ibc-frontend.vercel.app/auth/callback", true)
+                        .defaultSuccessUrl("http://localhost:3000/auth/callback", true)
                 )
                 .addFilterBefore(new JwtFilter(userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .build();
