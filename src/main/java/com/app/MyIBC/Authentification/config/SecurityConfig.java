@@ -30,10 +30,10 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtils jwtUtils;
 
-    @Value("${issuer-uri}")
+    @Value("${okta.oauth2.issuer-uri}")
     private String issuer;
 
-    @Value("${YOUR_CLIENT_ID}")
+    @Value("${okta.oauth2.YOUR_CLIENT_ID}")
     private String clientId;
 
     @Bean
