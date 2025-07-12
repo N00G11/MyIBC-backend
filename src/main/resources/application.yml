@@ -22,7 +22,7 @@ okta:
   oauth2:
     client-id: ${YOUR_CLIENT_ID}
     client-secret: ${YOUR_CLIENT_SECRET}
-    issuer-uri: https://${YOUR_DOMAIN}/
+    issuer: ${ISSURER_URI}
 
 
   #Configuration de la base de donnée
