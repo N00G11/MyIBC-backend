@@ -52,9 +52,11 @@ public class SecurityConfig {
                             .requestMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated();
                 })
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2SuccessHandler()) // ✅ handler personnalisé
-                        .userInfoEndpoint(userInfo -> userInfo.userService(oauth2UserService()))
+                .oauth2Login(oauth -> oauth
+                        .successHandler((request, response, authentication) -> {
+                            // 🚨 Redirection personnalisée vers le FRONTEND
+                            response.sendRedirect("https://myibc-frontend.vercel.app/dashboard");
+                        })
                 )
                 .addFilterBefore(new JwtFilter(userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .build();
