@@ -43,7 +43,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/success",
                                 "/oauth2/**",
                                 "/login/**",
                                 "/swagger-ui/**",
@@ -54,9 +53,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("http://localhost:3000/auth/callback", true)
-                )
+                .oauth2ResourceServer(withDefaults())
                 .logout(logout -> logout
                         .addLogoutHandler(logoutHandler())
                 )
