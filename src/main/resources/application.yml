@@ -1,5 +1,6 @@
 server:
   port: ${PORT:8080}  # Port dynamique Railway
+  forward-headers-strategy: native
 
 spring:
   servelet:
