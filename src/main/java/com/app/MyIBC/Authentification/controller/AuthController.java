@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -39,15 +40,14 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @GetMapping("/success")
-    public ResponseEntity<?> success(Authentication authentication) {
+    public ResponseEntity<?> success(@AuthenticationPrincipal OAuth2User principal) {
 
-        if (authentication == null) {
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non authentifié");
         }
 
-        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oauth2User.getAttribute("email");
-        String name = oauth2User.getAttribute("name");
+        String email = principal.getAttribute("email");
+        String name = principal.getAttribute("name");
 
         // Vérifier si le user existe déjà
         User existingUser = userRepository.findByEmail(email);
