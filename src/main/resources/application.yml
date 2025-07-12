@@ -4,7 +4,11 @@ server:
 spring:
   application:
     name: MyIBC
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://my-ibc123.us.auth0.com/.well-known/openid-configuration
 
 logging:
   level:
