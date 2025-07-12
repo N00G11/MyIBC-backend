@@ -20,8 +20,8 @@ logging:
 
 okta:
   oauth2:
-    client-id: ${ YOUR-CLIENT-ID }
-    client-secret: ${ YOUR-CLIENT-SECRET }
+    client-id: ${YOUR-CLIENT-ID}
+    client-secret: ${YOUR-CLIENT-SECRET}
     issuer-uri: https://${YOUR-DOMAIN}/
 
 
