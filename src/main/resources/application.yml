@@ -18,7 +18,7 @@ spring:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
 app:
-  frontend-url: https://my-ibc-frontend-b619gu070-n00g11s-projects.vercel.appgit  # 🔁 Mets ton vrai domaine ici
+  frontend-url: https://my-ibc-frontend-b619gu070-n00g11s-projects.vercel.app  # 🔁 Mets ton vrai domaine ici
   jwt:
     secret: ${JWT_SECRET}     # ✅ Utilisation de la variable d’environnement
     expiration: 7200000
