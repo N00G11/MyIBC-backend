@@ -18,6 +18,6 @@ public class Participant extends User {
     private String pays;
     private String ville;
     private String delegation;
-    private Boolean transport;
+    private Boolean payTransport;
     private Boolean qrCode;
 }

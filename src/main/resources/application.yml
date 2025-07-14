@@ -5,6 +5,12 @@ spring:
   application:
     name: MyIBC
 
+okta:
+  oauth2:
+    issuer: https://auth-myibc.us.auth0.com/
+    client-id: ${YOUR_CLIENT_ID}
+    client-secret: ${YOUR_CLIENT_SECRET}
+
   #Configuration de la base de donnée
   datasource:
     url: ${JDBC_DATABASE_URL}  # ✅ Utilisation de la variable d’environnement
