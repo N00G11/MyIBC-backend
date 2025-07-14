@@ -4,24 +4,6 @@ server:
 spring:
   application:
     name: MyIBC
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://my-ibc123.us.auth0.com/.well-known/openid-configuration
-
-logging:
-  level:
-    root: ERROR
-    org.springframework.web: ERROR
-    com.app.MyIBC: TRACE
-
-okta:
-  oauth2:
-    client-id: ${YOUR_CLIENT_ID}
-    client-secret: ${YOUR_CLIENT_SECRET}
-    issuer: ${ISSURER_URI}
-
 
   #Configuration de la base de donnée
   datasource:
@@ -37,3 +19,6 @@ okta:
 
 app:
   frontend-url: https://my-ibc-frontend.vercel.app # 🔁 Mets ton vrai domaine ici
+  jwt:
+    secret: ${JWT_SECRET}     # ✅ Utilisation de la variable d’environnement
+    expiration: 7200000

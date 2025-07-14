@@ -20,7 +20,6 @@ public class InscriptionController {
 
     private final InscriptionService inscriptionService;
     private final InscriptionRepository inscriptionRepository;
-    private final DirigeantRepository dirigeantRepository;
 
 
     @GetMapping("/all")
