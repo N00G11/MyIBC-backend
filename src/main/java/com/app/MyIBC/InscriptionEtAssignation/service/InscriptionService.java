@@ -77,6 +77,7 @@ public class InscriptionService {
         p.setSexe(participant.getSexe());
         p.setDateNaissance(participant.getDateNaissance());
         p.setQrCode(true);
+        p.setPayTransport(participant.getPayTransport());
 
         participantRepository.save(p);
 

@@ -10,6 +10,7 @@ import com.app.MyIBC.GestionDesUtilisateur.repository.DirigeantRepository;
 import com.app.MyIBC.GestionDesUtilisateur.repository.ParticipantRepository;
 import com.app.MyIBC.InscriptionEtAssignation.repository.InscriptionRepository;
 import com.app.MyIBC.StatistiqueEtExport.dto.PercentageStatDTO;
+import com.app.MyIBC.StatistiqueEtExport.service.StatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ public class StatistiqueController {
     private final DirigeantRepository dirigeantRepository;
     private final ParticipantRepository participantRepository;
     private final InscriptionRepository inscriptionRepository;
+    private final StatService statService;
     private final UserRepository userRepository;
     private final CampRepository campRepository;
 
@@ -56,6 +58,11 @@ public class StatistiqueController {
     @GetMapping("/admin/totalAmount")
     public Long getTotalAmount(){
         return inscriptionRepository.findAll().stream().mapToLong(c -> c.getCamp().getPrix()).sum();
+    }
+
+    @GetMapping("/admin/totalAmountTransport")
+    public Long getTotalAmountTransport(){
+        return statService.getTotalAmountForTransportAll();
     }
 
 

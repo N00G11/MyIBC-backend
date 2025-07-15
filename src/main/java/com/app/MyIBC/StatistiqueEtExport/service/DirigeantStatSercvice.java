@@ -27,6 +27,7 @@ public class DirigeantStatSercvice {
         return inscriptions.stream().mapToLong(c -> c.getParticipant().getPayTransport() ? 10000L : 0L).sum();
     }
 
+
     public Long getTotalAmount(Dirigeant dirigeant){
         List<Inscription> inscriptions = getAllInscriptionByDirigeant(dirigeant);
         return inscriptions.stream().mapToLong(c -> c.getCamp().getPrix()).sum();
