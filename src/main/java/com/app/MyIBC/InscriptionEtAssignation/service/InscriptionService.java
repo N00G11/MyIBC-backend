@@ -29,20 +29,19 @@ public class InscriptionService {
 
 
     @Transactional
-    public Inscription assignerDirigeantEquitablement(Participant participant, String email, Long campId) throws IOException, WriterException {
-        Inscription inscription = new Inscription();
+    public Inscription assignerDirigeantEquitablement(Inscription inscription, Long campId) throws IOException, WriterException {
         inscription.setDate(LocalDate.now());
-        String delegation = participant.getDelegation(); // Supposons que Participant a une propriété 'ville'
+        String delegation = inscription.getDelegation(); // Supposons que Participant a une propriété 'ville'
 
         // Récupérer tous les dirigeants de la même ville
-        List<Dirigeant> dirigeantsVille = dirigeantRepository.findByDelegation(delegation);
+        List<Dirigeant> dirigeantsDelegation = dirigeantRepository.findByDelegation(delegation);
 
-        if (dirigeantsVille.isEmpty()) {
+        if (dirigeantsDelegation.isEmpty()) {
             throw new IllegalStateException("Aucun dirigeant disponible pour la delegation : " + delegation);
         }
 
-        // Compter le nombre d'inscriptions par dirigeant pour la ville
-        Map<Dirigeant, Long> compteurDirigeants = dirigeantsVille.stream()
+        // Compter le nombre d'inscriptions par dirigeant pour la delegation
+        Map<Dirigeant, Long> compteurDirigeants = dirigeantsDelegation.stream()
                 .collect(Collectors.toMap(
                         dirigeant -> dirigeant,
                         dirigeant -> inscriptionRepository.countByDirigeantAssigneAndVille(dirigeant, delegation)
@@ -63,29 +62,12 @@ public class InscriptionService {
         Dirigeant dirigeantAssigner = candidats.get(new Random().nextInt(candidats.size()));
 
         //assignation des Participant et des Camps
+
         Optional<Camp> camp = campRepository.findById(campId).map(c -> {
             c.setParticipants(c.getParticipants() + 1);
             return campRepository.save(c);
         });
 
-        //mise a jour du participant
-        Participant p = participantRepository.findByEmail(email);
-        p.setVille(participant.getVille());
-        p.setDelegation(participant.getDelegation());
-        p.setPays(participant.getPays());
-        p.setTelephone(participant.getTelephone());
-        p.setSexe(participant.getSexe());
-        p.setDateNaissance(participant.getDateNaissance());
-        p.setQrCode(true);
-        p.setPayTransport(participant.getPayTransport());
-
-        participantRepository.save(p);
-
-
-
-
-
-        inscription.setParticipant(p);
         inscription.setCamp(camp.get());
 
         // Assigner le dirigeant à l'inscription et mettre à jour le nombre d'assignations

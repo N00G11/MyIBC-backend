@@ -12,17 +12,14 @@ import java.util.List;
 
 @Repository
 public interface InscriptionRepository extends JpaRepository<Inscription, Long> {
-    
+
     @Query("SELECT COUNT(i) FROM Inscription i " +
-           "JOIN i.participant p " +
-           "WHERE i.dirigeantAssigne = :dirigeant AND p.ville = :ville")
+            "WHERE i.dirigeantAssigne = :dirigeant AND i.ville = :ville")
     long countByDirigeantAssigneAndVille(
-        @Param("dirigeant") Dirigeant dirigeant,
-        @Param("ville") String ville
+            @Param("dirigeant") Dirigeant dirigeant,
+            @Param("ville") String ville
     );
 
     List<Inscription> findByDirigeantAssigne(Dirigeant dirigeant);
-
-    Inscription findByParticipantEmail(String email);
 }
 

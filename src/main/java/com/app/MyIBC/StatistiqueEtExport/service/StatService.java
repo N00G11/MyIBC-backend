@@ -25,10 +25,10 @@ public class StatService {
     }
 
 
-    public Long getTotalAmountForTransportAll(){
+   /* public Long getTotalAmountForTransportAll(){
         List<Dirigeant> dirigeants = dirigeantRepository.findAll();
         return dirigeants.stream().mapToLong(dirigeantStatSercvice::getTotalAmountForTransport).sum();
-    }
+    }*/
 
 
 }

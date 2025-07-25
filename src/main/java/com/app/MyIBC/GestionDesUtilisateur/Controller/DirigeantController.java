@@ -81,6 +81,8 @@ public class DirigeantController {
     @PutMapping("/update/{id}")
     public Optional<Dirigeant> updateDirigeant(@PathVariable Long id, @RequestBody Dirigeant dirigeant){
         return dirigeantRepository.findById(id).map(d -> {
+            d.setUsername(dirigeant.getUsername());
+            d.setTelephone(dirigeant.getTelephone());
             d.setPays(dirigeant.getPays());
             d.setVille(dirigeant.getVille());
             d.setDelegation(dirigeant.getDelegation());

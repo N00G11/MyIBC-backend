@@ -22,10 +22,10 @@ public class DirigeantStatSercvice {
         return inscriptionRepository.findByDirigeantAssigne(dirigeant);
     }
 
-    public Long getTotalAmountForTransport(Dirigeant dirigeant){
+    /*public Long getTotalAmountForTransport(Dirigeant dirigeant){
         List<Inscription> inscriptions = getAllInscriptionByDirigeant(dirigeant);
         return inscriptions.stream().mapToLong(c -> c.getParticipant().getPayTransport() ? 10000L : 0L).sum();
-    }
+    }*/
 
 
     public Long getTotalAmount(Dirigeant dirigeant){

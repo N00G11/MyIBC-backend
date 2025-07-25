@@ -60,10 +60,10 @@ public class StatistiqueController {
         return inscriptionRepository.findAll().stream().mapToLong(c -> c.getCamp().getPrix()).sum();
     }
 
-    @GetMapping("/admin/totalAmountTransport")
+    /*@GetMapping("/admin/totalAmountTransport")
     public Long getTotalAmountTransport(){
         return statService.getTotalAmountForTransportAll();
-    }
+    }*/
 
 
 
@@ -80,15 +80,15 @@ public class StatistiqueController {
 
         // Par sexe
         Map<String, Long> countBySexe = inscriptions.stream()
-                .collect(Collectors.groupingBy(i -> i.getParticipant().getSexe(), Collectors.counting()));
+                .collect(Collectors.groupingBy(i -> i.getSexe(), Collectors.counting()));
 
         // Par pays
         Map<String, Long> countByPays = inscriptions.stream()
-                .collect(Collectors.groupingBy(i -> i.getParticipant().getPays(), Collectors.counting()));
+                .collect(Collectors.groupingBy(i -> i.getPays(), Collectors.counting()));
 
         // Par ville
         Map<String, Long> countByVille = inscriptions.stream()
-                .collect(Collectors.groupingBy(i -> i.getParticipant().getVille(), Collectors.counting()));
+                .collect(Collectors.groupingBy(i -> i.getVille(), Collectors.counting()));
 
         return Map.of(
                 "parCamp", toPercentageDTO(countByCamp, total),

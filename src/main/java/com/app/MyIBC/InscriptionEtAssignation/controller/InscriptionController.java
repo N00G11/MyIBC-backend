@@ -27,16 +27,19 @@ public class InscriptionController {
         return inscriptionRepository.findAll();
     }
 
-    @GetMapping("/email/{email}")
-    public Inscription getInscriptionByParticipantEmail(@PathVariable String email) {
-        return inscriptionRepository.findByParticipantEmail(email);
+
+    @GetMapping("/{id}")
+    public Inscription getInscriptionById(@PathVariable Long id) {
+        return inscriptionRepository.findById(id).get();
     }
 
-
-    @PostMapping("/add/{email}/{campId}")
-    public Inscription addInscription(@PathVariable("email") String email, @PathVariable("campId") Long campId,@RequestBody Participant participant) throws IOException, WriterException {
-        return inscriptionService.assignerDirigeantEquitablement(participant, email, campId);
+    @PostMapping("/add/{campId}")
+    public Inscription addInscription(@PathVariable("campId") Long campId,@RequestBody Inscription inscription) throws IOException, WriterException {
+        return inscriptionService.assignerDirigeantEquitablement(inscription, campId);
     }
 
-
+    @DeleteMapping("/delete/{id}")
+    public void deleteInscription(@PathVariable Long id){
+        inscriptionRepository.deleteById(id);
+    }
 }

@@ -16,10 +16,14 @@ public class Inscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     private LocalDate date;
-
-    @ManyToOne
-    @JoinColumn(name = "participant_id")
-    private Participant participant;
+    private String nom;
+    private String prenom;
+    private String sexe;
+    private String telephone;
+    private LocalDate dateNaissance;
+    private String pays;
+    private String ville;
+    private String delegation;
 
     @ManyToOne
     @JoinColumn(name = "camp_id")

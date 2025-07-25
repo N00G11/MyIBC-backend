@@ -51,11 +51,11 @@ public class DirigeantStatController {
         return dirigeantStatSercvice.getTotalAmount(dirireant);
     }
 
-    @GetMapping("/totalAmountforTransport/{email}")
+    /*@GetMapping("/totalAmountforTransport/{email}")
     public Long getallAmountForTransport(@PathVariable String email){
         Dirigeant dirireant = dirigeantRepository.findByEmail(email);
         return dirigeantStatSercvice.getTotalAmountForTransport(dirireant);
-    }
+    }*/
 
     @GetMapping("/totalAmountByCamp/{email}/{id}")
     public Long getallAmountByCamp(@PathVariable String email, @PathVariable Long id){
