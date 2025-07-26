@@ -17,5 +17,8 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private Role role = Role.ROLE_PARTICIPANT;
+
+    @Column(unique = true)
+    private String code;
+    private Role role = Role.ROLE_UTILISATEUR;
 }

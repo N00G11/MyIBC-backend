@@ -3,14 +3,12 @@ package com.app.MyIBC.Authentification.controller;
 import com.app.MyIBC.Authentification.config.JwtUtils;
 import com.app.MyIBC.Authentification.entity.User;
 import com.app.MyIBC.Authentification.repository.UserRepository;
-import com.app.MyIBC.Authentification.utils.Role;
-import com.app.MyIBC.GestionDesUtilisateur.entity.Participant;
-import com.app.MyIBC.GestionDesUtilisateur.repository.ParticipantRepository;
+import com.app.MyIBC.Authentification.service.UserService;
+import com.app.MyIBC.GestionDesUtilisateur.entity.Utilisateur;
+import com.app.MyIBC.GestionDesUtilisateur.service.UtilisateurService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +17,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,65 +27,47 @@ import java.util.Map;
 public class AuthController {
 
     private final UserRepository userRepository;
-    private final ParticipantRepository participantRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final UtilisateurService utilisateurService;
+    private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
-        // Vérification d'unicité
-        if (userRepository.findByUsername(user.getUsername()) != null || userRepository.findByEmail(user.getEmail()) != null) {
-            return ResponseEntity.badRequest().body("Username or Email is already in use");
+    public ResponseEntity<?> register(@RequestBody User user) {
+        try {
+            // Vérifier si le username existe déjà
+            if (userRepository.findByUsername(user.getUsername()) != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Le nom d'utilisateur '" + user.getUsername() + "' est déjà utilisé.");
+            }
+
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            Utilisateur newUser = utilisateurService.saveUtilisateur(user);
+
+            return ResponseEntity.ok(
+                    buildAuthResponse(
+                            newUser.getUsername(),
+                            String.valueOf(newUser.getRole()),
+                            newUser.getCode()
+                    )
+            );
+        } catch (Exception e) {
+            log.error("Erreur lors de l'enregistrement : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur serveur pendant l'enregistrement : " + e.getMessage());
         }
-
-        // Encoder le mot de passe
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Créer un Participant
-        Participant participant = new Participant();
-        participant.setUsername(user.getUsername());
-        participant.setEmail(user.getEmail());
-        participant.setPassword(user.getPassword());
-        participant.setRole(Role.valueOf("ROLE_PARTICIPANT")); // tu peux adapter selon ton besoin
-
-        participantRepository.save(participant);
-
-        // Générer le token
-        String token = jwtUtils.generateToken(participant.getUsername());
-
-        // Cookies sécurisés
-        ResponseCookie tokenCookie = ResponseCookie.from("token", token)
-                .path("/")
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
-                .build();
-
-        ResponseCookie roleCookie = ResponseCookie.from("role", String.valueOf(participant.getRole()))
-                .path("/")
-                .httpOnly(false)
-                .secure(true)
-                .sameSite("Strict")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, roleCookie.toString());
-
-        Map<String, Object> authData = new HashMap<>();
-        authData.put("token", token);
-        authData.put("type", "Bearer");
-        authData.put("role", participant.getRole());
-
-        return ResponseEntity.ok(authData);
     }
 
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody User user) {
         try {
             User u = userRepository.findByEmail(user.getEmail());
+
             if (u == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+                return unauthorized("Email ou mot de passe invalide.");
             }
 
             Authentication authentication = authenticationManager.authenticate(
@@ -96,44 +75,53 @@ public class AuthController {
             );
 
             if (authentication.isAuthenticated()) {
-                String jwtToken = jwtUtils.generateToken(u.getUsername());
-
-                ResponseCookie tokenCookie = ResponseCookie.from("token", jwtToken)
-                        .path("/")
-                        .httpOnly(true)
-                        .secure(true)
-                        .sameSite("Strict")
-                        .build();
-
-                ResponseCookie roleCookie = ResponseCookie.from("role", String.valueOf(u.getRole()))
-                        .path("/")
-                        .httpOnly(false)
-                        .secure(true)
-                        .sameSite("Strict")
-                        .build();
-
-                response.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString());
-                response.addHeader(HttpHeaders.SET_COOKIE, roleCookie.toString());
-
-                Map<String, Object> authData = new HashMap<>();
-                authData.put("token", jwtToken);
-                authData.put("type", "Bearer ");
-                authData.put("role", u.getRole());
-
-                if (u instanceof Participant) {
-                    Participant p = (Participant) u;
-                    if (p.getQrCode() == true) {
-                        authData.put("badge", "true");
-                    }
-                }
-
-                return ResponseEntity.ok(authData);
+                return ResponseEntity.ok(buildAuthResponse(u.getUsername(), String.valueOf(u.getRole()), u.getCode()));
             }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            return unauthorized("Email ou mot de passe invalide.");
+
         } catch (AuthenticationException e) {
-            log.error("Authentication failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password: " + e.getMessage());
+            log.warn("Échec de l'authentification : {}", e.getMessage());
+            return unauthorized("Email ou mot de passe invalide.");
+        } catch (Exception e) {
+            log.error("Erreur inattendue lors de l'authentification : {}", e.getMessage());
+            return serverError("Erreur interne : " + e.getMessage());
         }
+    }
+
+    @PostMapping("/login/{code}")
+    public ResponseEntity<?> loginByCode(@PathVariable String code) {
+        try {
+            User u = userService.getUserByCode(code);
+
+            if (u == null || u.getUsername() == null) {
+                return unauthorized("Code invalide.");
+            }
+
+            return ResponseEntity.ok(buildAuthResponse(u.getUsername(), String.valueOf(u.getRole()), u.getCode()));
+
+        } catch (Exception e) {
+            log.error("Erreur lors de l'authentification avec code : {}", e.getMessage());
+            return serverError("Erreur serveur : " + e.getMessage());
+        }
+    }
+
+    // ---------- Méthodes utilitaires ----------
+
+    private Map<String, Object> buildAuthResponse(String username, String role, String code) {
+        Map<String, Object> authData = new HashMap<>();
+        authData.put("token", jwtUtils.generateToken(username));
+        authData.put("type", "Bearer");
+        authData.put("role", role);
+        if (code != null) authData.put("code", code);
+        return authData;
+    }
+
+    private ResponseEntity<String> unauthorized(String message) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
+    }
+
+    private ResponseEntity<String> serverError(String message) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
 }
