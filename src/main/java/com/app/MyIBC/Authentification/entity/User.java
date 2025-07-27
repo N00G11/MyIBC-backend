@@ -1,6 +1,7 @@
 package com.app.MyIBC.Authentification.entity;
 
 import com.app.MyIBC.Authentification.utils.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,6 +17,10 @@ public class User {
     private Long Id;
     private String username;
     private String password;
+    private String pays;
+    private String telephone;
+
+    @JsonIgnore
     private String email;
 
     @Column(unique = true)

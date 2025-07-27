@@ -23,4 +23,15 @@ public class UserService {
         }
         return null;
     }
+
+    public User getUserByTelephone(String telephone){
+        List<User> users = userRepository.findAll();
+
+        for(User u:users){
+            if (telephone.equals(u.getTelephone())){
+                return u;
+            }
+        }
+        return null;
+    }
 }

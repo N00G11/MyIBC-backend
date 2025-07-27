@@ -4,7 +4,13 @@ import com.app.MyIBC.Authentification.config.JwtUtils;
 import com.app.MyIBC.Authentification.entity.User;
 import com.app.MyIBC.Authentification.repository.UserRepository;
 import com.app.MyIBC.Authentification.service.UserService;
+import com.app.MyIBC.Authentification.utils.Role;
+import com.app.MyIBC.GestionDesUtilisateur.entity.Admin;
+import com.app.MyIBC.GestionDesUtilisateur.entity.Tresorier;
 import com.app.MyIBC.GestionDesUtilisateur.entity.Utilisateur;
+import com.app.MyIBC.GestionDesUtilisateur.repository.AdminRepository;
+import com.app.MyIBC.GestionDesUtilisateur.repository.TresorierRepository;
+import com.app.MyIBC.GestionDesUtilisateur.repository.UtilisateurRepository;
 import com.app.MyIBC.GestionDesUtilisateur.service.UtilisateurService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +33,9 @@ import java.util.Map;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final UtilisateurRepository utilisateurRepository;
+    private final TresorierRepository tresorierRepository;
+    private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
@@ -37,9 +46,9 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
             // Vérifier si le username existe déjà
-            if (userRepository.findByUsername(user.getUsername()) != null) {
+            if (userRepository.findByTelephone(user.getTelephone()) != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("Le nom d'utilisateur '" + user.getUsername() + "' est déjà utilisé.");
+                        .body("Le numero de telephone '" + user.getTelephone() + "' est déjà utilisé.");
             }
 
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -61,13 +70,13 @@ public class AuthController {
     }
 
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    @PostMapping("/login/code")
+    public ResponseEntity<?> loginByCode(@RequestBody User user) {
         try {
-            User u = userRepository.findByEmail(user.getEmail());
+            User u = userService.getUserByCode(user.getCode());
 
             if (u == null) {
-                return unauthorized("Email ou mot de passe invalide.");
+                return unauthorized("code ou mot de passe invalide.");
             }
 
             Authentication authentication = authenticationManager.authenticate(
@@ -78,7 +87,7 @@ public class AuthController {
                 return ResponseEntity.ok(buildAuthResponse(u.getUsername(), String.valueOf(u.getRole()), u.getCode()));
             }
 
-            return unauthorized("Email ou mot de passe invalide.");
+            return unauthorized("code ou mot de passe invalide.");
 
         } catch (AuthenticationException e) {
             log.warn("Échec de l'authentification : {}", e.getMessage());
@@ -89,22 +98,68 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login/{code}")
-    public ResponseEntity<?> loginByCode(@PathVariable String code) {
-        try {
-            User u = userService.getUserByCode(code);
 
-            if (u == null || u.getUsername() == null) {
-                return unauthorized("Code invalide.");
+    @PostMapping("/login/telephone")
+    public ResponseEntity<?> loginByTelephone(@RequestBody User user) {
+        try {
+            User u = userService.getUserByTelephone(user.getTelephone());
+
+            if (u == null) {
+                return unauthorized("numero de telephone ou mot de passe invalide.");
             }
 
-            return ResponseEntity.ok(buildAuthResponse(u.getUsername(), String.valueOf(u.getRole()), u.getCode()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(u.getUsername(), user.getPassword())
+            );
 
+            if (authentication.isAuthenticated()) {
+                return ResponseEntity.ok(buildAuthResponse(u.getUsername(), String.valueOf(u.getRole()), u.getCode()));
+            }
+
+            return unauthorized("numero de telephone ou mot de passe invalide.");
+
+        } catch (AuthenticationException e) {
+            log.warn("Échec de l'authentification : {}", e.getMessage());
+            return unauthorized("Email ou mot de passe invalide.");
         } catch (Exception e) {
-            log.error("Erreur lors de l'authentification avec code : {}", e.getMessage());
-            return serverError("Erreur serveur : " + e.getMessage());
+            log.error("Erreur inattendue lors de l'authentification : {}", e.getMessage());
+            return serverError("Erreur interne : " + e.getMessage());
         }
     }
+
+    @PostMapping("/verify-identity")
+    public ResponseEntity<?> verifyIdentify(@RequestBody User user){
+        if (!(userService.getUserByTelephone(user.getTelephone()) == userRepository.findByUsername(user.getUsername()))){
+            return ResponseEntity.ok(false);
+        }
+
+        return ResponseEntity.ok(true);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody User user) {
+        User u = userRepository.findByTelephone(user.getTelephone());
+
+        if (u == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé");
+        }
+
+        String newPassword = passwordEncoder.encode(user.getPassword());
+        u.setPassword(newPassword);
+
+        if (u instanceof Admin) {
+            adminRepository.save((Admin) u);
+        } else if (u instanceof Tresorier) {
+           tresorierRepository.save((Tresorier) u);
+        } else if (u instanceof Utilisateur) {
+           utilisateurRepository.save((Utilisateur) u);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Type d'utilisateur non supporté");
+        }
+
+        return ResponseEntity.ok(true);
+    }
+
 
     // ---------- Méthodes utilitaires ----------
 

@@ -34,7 +34,8 @@ public class UtilisateurService {
     public Utilisateur saveUtilisateur(User user){
         Utilisateur u = new Utilisateur();
         u.setUsername(user.getUsername());
-        u.setEmail(user.getEmail());
+        u.setPays(user.getPays());
+        u.setTelephone(user.getTelephone());
         u.setPassword(user.getPassword());
         u.setRole(Role.valueOf("ROLE_UTILISATEUR"));
 

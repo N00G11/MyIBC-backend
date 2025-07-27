@@ -17,7 +17,8 @@ public class TresorierService {
     public Tresorier saveTresorier(Tresorier tresorier){
         Tresorier t = new Tresorier();
         t.setUsername(tresorier.getUsername());
-        t.setEmail(tresorier.getEmail());
+        t.setPays(tresorier.getPays());
+        t.setTelephone(tresorier.getTelephone());
         t.setPassword(tresorier.getPassword());
         t.setRole(Role.valueOf("ROLE_TRESORIER"));
 
