@@ -15,8 +15,7 @@ public class Inscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     private LocalDate date = LocalDate.now();
-    private String nom;
-    private String prenom;
+    private String nomComplet;
     private String sexe;
     private String telephone;
     private LocalDate dateNaissance;

@@ -37,9 +37,9 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         // ... Ton code d'initialisation Camp & Admin ici ...
 
-        String type = "Camp des Agneaux";
-        String description = "Camp des Agneaux";
-        String trancheAge = "6-12";
+        String type = "Camp de la Fondation";
+        String description = "Camp de la Fondation";
+        String trancheAge = "3-10";
         Long prix = 10000L;
         if (campRepository.findCampByType(type).isEmpty()){
             Camp c1 = new Camp();
@@ -54,7 +54,7 @@ public class DataInitializer implements CommandLineRunner {
 
         type = "Camp des Jeunes";
         description = "Camp des Jeunes";
-        trancheAge = "13-20";
+        trancheAge = "11 et plus";
         prix = 10000L;
         if (campRepository.findCampByType(type).isEmpty()){
             Camp c1 = new Camp();
@@ -68,7 +68,7 @@ public class DataInitializer implements CommandLineRunner {
 
         type = "Camp des Leaders";
         description = "Camp des leaders";
-        trancheAge = "21-50";
+        trancheAge = "11 et plus";
         prix = 15000L;
         if (campRepository.findCampByType(type).isEmpty()){
             Camp c1 = new Camp();

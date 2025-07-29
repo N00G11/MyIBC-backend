@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +40,9 @@ public class PayementService {
         // Récupérer l'ancien montant avant mise à zéro
         Long montantPaye;
         switch (camp.getType()) {
-            case "Camp des Agneaux" -> {
-                montantPaye = utilisateur.getCampAgneauxAmount();
-                utilisateur.setCampAgneauxAmount(0L);
+            case "Camp de la Fondation" -> {
+                montantPaye = utilisateur.getCampFondationAmount();
+                utilisateur.setCampFondationAmount(0L);
             }
             case "Camp des Jeunes" -> {
                 montantPaye = utilisateur.getCampJeuneAmount();

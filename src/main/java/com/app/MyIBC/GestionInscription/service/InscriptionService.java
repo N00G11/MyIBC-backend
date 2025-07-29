@@ -33,7 +33,7 @@ public class InscriptionService {
         Long prix = camp.getPrix();
 
         switch (campType) {
-            case "Camp des Agneaux" -> utilisateur.setCampAgneauxAmount(utilisateur.getCampAgneauxAmount() + prix);
+            case "Camp de la Fondation" -> utilisateur.setCampFondationAmount(utilisateur.getCampFondationAmount() + prix);
             case "Camp des Jeunes"  -> utilisateur.setCampJeuneAmount(utilisateur.getCampJeuneAmount() + prix);
             case "Camp des Leaders" -> utilisateur.setCampLeaderAmount(utilisateur.getCampLeaderAmount() + prix);
             default -> throw new IllegalArgumentException("Type de camp inconnu : " + campType);
