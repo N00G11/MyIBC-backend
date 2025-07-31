@@ -6,6 +6,7 @@ import com.app.MyIBC.GestionDesUtilisateur.service.TresorierService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,6 +19,7 @@ public class TresorierController {
 
     private final TresorierRepository tresorierRepository;
     private final TresorierService tresorierService;
+    private final PasswordEncoder passwordEncoder;
 
     // Récupérer tous les trésoriers
     @GetMapping
@@ -36,6 +38,8 @@ public class TresorierController {
     // Ajouter un trésorier
     @PostMapping
     public ResponseEntity<Tresorier> save(@RequestBody Tresorier tresorier) {
+        String password = passwordEncoder.encode(tresorier.getPassword());
+        tresorier.setPassword(password);
         Tresorier saved = tresorierService.saveTresorier(tresorier);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

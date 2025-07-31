@@ -26,4 +26,8 @@ public class User {
     @Column(unique = true)
     private String code;
     private Role role = Role.ROLE_UTILISATEUR;
+
+    private Long CampAgneauxAmount = 0L;
+    private Long CampFondationAmount = 0L;
+    private Long CampLeaderAmount = 0L;
 }

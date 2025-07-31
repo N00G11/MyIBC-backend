@@ -57,23 +57,4 @@ public class UtilisateurService {
         return utilisateurRepository.save(u);
     }
 
-    public List<Inscription> getAllInscriptionByUserCode(String code) {
-        Optional<Utilisateur> utilisateurOpt = utilisateurRepository.findByCode(code);
-
-        if (utilisateurOpt.isEmpty()) {
-            return Collections.emptyList(); // ou tu peux lancer une exception personnalisée
-        }
-
-        return inscriptionRepository.findByUtilisateur(utilisateurOpt.get());
-    }
-
-
-    public List<Inscription> getInscriptionsByUserAndCamp(String userCode, Long campId) {
-        Utilisateur utilisateur = getUserByCode(userCode);
-        Camp camp = campRepository.findById(campId)
-                .orElseThrow(() -> new IllegalArgumentException("Camp non trouvé"));
-
-        return inscriptionRepository.findByUtilisateurAndCamp(utilisateur, camp);
-    }
-
 }

@@ -6,7 +6,6 @@ import com.app.MyIBC.GestionDesCamps.repository.CampRepository;
 import com.app.MyIBC.GestionDesUtilisateur.entity.Admin;
 import com.app.MyIBC.GestionDesUtilisateur.entity.Tresorier;
 import com.app.MyIBC.GestionDesUtilisateur.repository.AdminRepository;
-import com.app.MyIBC.GestionDesUtilisateur.repository.TresorierRepository;
 import com.app.MyIBC.GestionDesUtilisateur.service.TresorierService;
 import com.app.MyIBC.gestionDesLocalisation.entities.Delegation;
 import com.app.MyIBC.gestionDesLocalisation.entities.Pays;
@@ -37,8 +36,8 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         // ... Ton code d'initialisation Camp & Admin ici ...
 
-        String type = "Camp de la Fondation";
-        String description = "Camp de la Fondation";
+        String type = "Camp des Agneaux";
+        String description = "Camp des Agneaux";
         String trancheAge = "3-10";
         Long prix = 10000L;
         if (campRepository.findCampByType(type).isEmpty()){
@@ -52,8 +51,8 @@ public class DataInitializer implements CommandLineRunner {
         }
 
 
-        type = "Camp des Jeunes";
-        description = "Camp des Jeunes";
+        type = "Camp de la Fondation";
+        description = "Camp de la Fondation";
         trancheAge = "11 et plus";
         prix = 10000L;
         if (campRepository.findCampByType(type).isEmpty()){
@@ -81,7 +80,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
 
-        String username = "admin";
+        String username = "admin d";
         String email = "admin@gmail.com";
         if (validate(username, email)) {
             Admin admin = new Admin();
@@ -126,7 +125,7 @@ public class DataInitializer implements CommandLineRunner {
         d.setName(delegation);
         d.setVille(v);
         delegationRepository.save(d);
-        System.out.println("Localisation" + p.getName() + " " + v.getName() + "  " + d.getName() + "cree avec succes");
+        System.out.println("Localisation" + p.getName() + " " + v.getName() + "  " + d.getName() + "  cree avec succes");
 
 
 

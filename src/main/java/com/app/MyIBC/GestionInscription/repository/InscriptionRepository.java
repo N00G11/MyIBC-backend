@@ -1,6 +1,7 @@
 package com.app.MyIBC.GestionInscription.repository;
 
 
+import com.app.MyIBC.Authentification.entity.User;
 import com.app.MyIBC.GestionDesCamps.entity.Camp;
 import com.app.MyIBC.GestionDesUtilisateur.entity.Utilisateur;
 import com.app.MyIBC.GestionInscription.entity.Inscription;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface InscriptionRepository extends JpaRepository<Inscription, Long> {
-    List<Inscription> findByUtilisateur(Utilisateur utilisateur);
-    List<Inscription> findByUtilisateurAndCamp(Utilisateur utilisateur, Camp camp);
+    List<Inscription> findByUtilisateur(User utilisateur);
+    List<Inscription> findByUtilisateurAndCamp(User utilisateur, Camp camp);
 }
 

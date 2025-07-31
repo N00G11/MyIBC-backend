@@ -7,6 +7,7 @@ import com.app.MyIBC.GestionInscription.repository.InscriptionRepository;
 import com.app.MyIBC.GestionPayement.entity.Payement;
 import com.app.MyIBC.GestionPayement.repository.PayementRepository;
 import com.app.MyIBC.StatistiqueEtExport.dto.PercentageStatDTO;
+import com.app.MyIBC.gestionDesLocalisation.entities.Pays;
 import com.app.MyIBC.gestionDesLocalisation.repository.PaysRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,8 +36,8 @@ public class StatistiqueController {
     }
 
     @GetMapping("/admin/NumberAllPays")
-    public Long getAllPays() {
-        return paysRepository.count();
+    public List<Pays> getAllPays() {
+        return paysRepository.findAll();
     }
 
     @GetMapping("/admin/allCamp")
@@ -67,30 +69,35 @@ public class StatistiqueController {
 
     @GetMapping("/admin/repartition")
     public Map<String, List<PercentageStatDTO>> getRepartitionStats() {
-        var inscriptions = inscriptionRepository.findAll();
-        long total = inscriptions.size();
+        var inscriptions = inscriptionRepository.findAll().stream()
+                .filter(Inscription::getBadge) // on filtre ceux qui ont badge == true
+                .toList();
 
+        long total = inscriptions.size();
         if (total == 0) return Map.of();
 
+        // Regroupements
         Map<String, Long> countByCamp = inscriptions.stream()
                 .collect(Collectors.groupingBy(i -> i.getCamp().getType(), Collectors.counting()));
 
         Map<String, Long> countBySexe = inscriptions.stream()
                 .collect(Collectors.groupingBy(Inscription::getSexe, Collectors.counting()));
 
-        Map<String, Long> countByPays = inscriptions.stream()
-                .collect(Collectors.groupingBy(Inscription::getPays, Collectors.counting()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        Map<String, Long> countByVille = inscriptions.stream()
-                .collect(Collectors.groupingBy(Inscription::getVille, Collectors.counting()));
-
+        Map<String, Long> countByDateNaissance = inscriptions.stream()
+                .collect(Collectors.groupingBy(
+                        i -> i.getDateNaissance().format(formatter), // conversion LocalDate -> String
+                        Collectors.counting()
+                ));
+        // Construction du résultat
         return Map.of(
                 "parCamp", toPercentageDTO(countByCamp, total),
                 "parSexe", toPercentageDTO(countBySexe, total),
-                "parPays", toPercentageDTO(countByPays, total),
-                "parVille", toPercentageDTO(countByVille, total)
+                "parTrancheAge", toPercentageDTO(countByDateNaissance, total)
         );
     }
+
 
     private List<PercentageStatDTO> toPercentageDTO(Map<String, Long> counts, long total) {
         return counts.entrySet().stream()

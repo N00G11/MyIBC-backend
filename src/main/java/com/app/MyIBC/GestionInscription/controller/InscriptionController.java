@@ -30,9 +30,9 @@ public class InscriptionController {
     }
 
 
-    @PostMapping("/add/{code}/{campId}")
-    public Inscription saveInscription(@PathVariable String code, @PathVariable Long campId, @RequestBody Inscription inscription){
-        return inscriptionService.saveInscription(inscription, code, campId);
+    @PostMapping("/add/{code}/{campId}/{idPays}/{idVille}/{idDelegation}")
+    public Inscription saveInscription(@PathVariable String code, @PathVariable Long campId, @PathVariable Long idPays, @PathVariable Long idVille, @PathVariable Long idDelegation, @RequestBody Inscription inscription){
+        return inscriptionService.saveInscription(inscription, code, campId, idPays, idVille, idDelegation);
     }
 
     @DeleteMapping("/delete/{id}")

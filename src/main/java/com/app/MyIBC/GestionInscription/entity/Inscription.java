@@ -1,8 +1,12 @@
 package com.app.MyIBC.GestionInscription.entity;
 
 
+import com.app.MyIBC.Authentification.entity.User;
 import com.app.MyIBC.GestionDesCamps.entity.Camp;
 import com.app.MyIBC.GestionDesUtilisateur.entity.Utilisateur;
+import com.app.MyIBC.gestionDesLocalisation.entities.Delegation;
+import com.app.MyIBC.gestionDesLocalisation.entities.Pays;
+import com.app.MyIBC.gestionDesLocalisation.entities.Ville;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,11 +23,24 @@ public class Inscription {
     private String sexe;
     private String telephone;
     private LocalDate dateNaissance;
-    private String pays;
-    private String ville;
-    private String delegation;
+
+
+    @ManyToOne
+    @JoinColumn(name = "pays_id")
+    private Pays pays;
+
+    @ManyToOne
+    @JoinColumn(name = "ville_id")
+    private Ville ville;
+
+    @ManyToOne
+    @JoinColumn(name = "delegation_id")
+    private Delegation delegation;
+
+
     private String code;
     private Boolean badge = false;
+
 
     @ManyToOne
     @JoinColumn(name = "camp_id")
@@ -31,5 +48,5 @@ public class Inscription {
 
     @ManyToOne
     @JoinColumn(name = "utilisateur_id")
-    private Utilisateur utilisateur;
+    private User utilisateur;
 }

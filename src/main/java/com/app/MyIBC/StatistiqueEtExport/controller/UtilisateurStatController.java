@@ -1,5 +1,7 @@
 package com.app.MyIBC.StatistiqueEtExport.controller;
 
+import com.app.MyIBC.Authentification.entity.User;
+import com.app.MyIBC.Authentification.service.UserService;
 import com.app.MyIBC.GestionDesCamps.entity.Camp;
 import com.app.MyIBC.GestionDesCamps.repository.CampRepository;
 import com.app.MyIBC.GestionDesUtilisateur.entity.Utilisateur;
@@ -22,6 +24,7 @@ public class UtilisateurStatController {
     private final UtilisateurRepository utilisateurRepository;
     private final UtilisateurService utilisateurService;
     private final CampRepository campRepository;
+    private final UserService userService;
 
     // Nombre de participants d'un utilisateur à un camp
     @GetMapping("/numberParticipantsByCamp/{code}/{campId}")
@@ -29,7 +32,7 @@ public class UtilisateurStatController {
         Camp camp = campRepository.findById(campId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Camp non trouvé"));
 
-        List<Inscription> inscriptions = utilisateurService.getAllInscriptionByUserCode(code);
+        List<Inscription> inscriptions = userService.getAllInscriptionByUserCode(code);
         long count = inscriptions.stream()
                 .filter(i -> i.getCamp().getId().equals(camp.getId()))
                 .count();
@@ -43,7 +46,7 @@ public class UtilisateurStatController {
         Camp camp = campRepository.findById(campId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Camp non trouvé"));
 
-        List<Inscription> inscriptions = utilisateurService.getAllInscriptionByUserCode(code);
+        List<Inscription> inscriptions = userService.getAllInscriptionByUserCode(code);
         long total = inscriptions.stream()
                 .filter(i -> i.getCamp().getId().equals(camp.getId()))
                 .mapToLong(i -> i.getCamp().getPrix())
@@ -55,14 +58,14 @@ public class UtilisateurStatController {
     // Tous les participants liés à un utilisateur
     @GetMapping("/allParticipants/{code}")
     public ResponseEntity<List<Inscription>> allParticipants(@PathVariable String code) {
-        List<Inscription> inscriptions = utilisateurService.getAllInscriptionByUserCode(code);
+        List<Inscription> inscriptions = userService.getAllInscriptionByUserCode(code);
         return ResponseEntity.ok(inscriptions);
     }
 
     // Récupérer un utilisateur par son code
     @GetMapping("/code/{code}")
-    public ResponseEntity<Utilisateur> getUtilisateurByCode(@PathVariable String code) {
-        Utilisateur utilisateur = utilisateurService.getUserByCode(code);
+    public ResponseEntity<?> getUtilisateurByCode(@PathVariable String code) {
+        User utilisateur = userService.getUserByCode(code);
         if (utilisateur == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur non trouvé");
         }

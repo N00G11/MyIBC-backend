@@ -1,6 +1,7 @@
 package com.app.MyIBC.GestionPayement.entity;
 
 
+import com.app.MyIBC.Authentification.entity.User;
 import com.app.MyIBC.GestionDesCamps.entity.Camp;
 import com.app.MyIBC.GestionDesUtilisateur.entity.Utilisateur;
 import jakarta.persistence.*;
@@ -26,6 +27,6 @@ public class Payement {
 
     @ManyToOne
     @JoinColumn(name = "utilisateur_id")
-    private Utilisateur utilisateur;
+    private User utilisateur;
 
 }
