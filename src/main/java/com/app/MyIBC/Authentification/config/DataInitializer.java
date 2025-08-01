@@ -94,43 +94,6 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("⚠️ Admin non ajouté : le username ou l’email est déjà utilisé.");
         }
 
-
-        username = "tresorier";
-        email = "trsorier@gmail.com";
-        if (validate(username, email)) {
-            Tresorier tresorier = new Tresorier();
-            tresorier.setUsername(username);
-            tresorier.setPassword(passwordEncoder.encode("1234"));
-            tresorier.setEmail(email);
-            tresorier.setRole(Role.ROLE_TRESORIER);
-            tresorier = tresorierService.saveTresorier(tresorier);
-            System.out.println("✔️ Tresorier ajouté avec succès.  code: " + tresorier.getCode());
-        } else {
-            System.out.println("⚠️ Admin non ajouté : le username ou l’email est déjà utilisé.");
-        }
-
-
-        String pays = "Cameroun";
-        String ville = "bangangte";
-        String delegation = "EEC";
-
-        Pays p = new Pays();
-        p.setName(pays);
-        p = paysRepository.save(p);
-        Ville v = new Ville();
-        v.setName(ville);
-        v.setPays(p);
-        v = villeRepository.save(v);
-        Delegation d = new Delegation();
-        d.setName(delegation);
-        d.setVille(v);
-        delegationRepository.save(d);
-        System.out.println("Localisation" + p.getName() + " " + v.getName() + "  " + d.getName() + "  cree avec succes");
-
-
-
-
-
     }
 
     public boolean validate(String username, String email) {
